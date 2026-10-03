@@ -660,7 +660,41 @@ th {
         flex-direction: column;
       }
     }
-  </style>
+  
+
+    /* Portfolio polish */
+    .portfolio-strip {
+      margin: 10px auto 55px;
+      padding: 22px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      background: linear-gradient(135deg, rgba(97,168,255,.10), rgba(169,135,255,.08));
+      box-shadow: 0 20px 60px rgba(0,0,0,.16);
+    }
+    .portfolio-stat {
+      padding: 16px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.045);
+      border: 1px solid rgba(255,255,255,.07);
+    }
+    .portfolio-stat strong { display:block; font-size: 17px; margin-bottom: 5px; }
+    .portfolio-stat span { color: var(--muted); font-size: 13px; line-height: 1.8; }
+    .live-badge {
+      display:inline-flex; align-items:center; gap:7px; margin-bottom:14px;
+      padding:7px 11px; border-radius:999px; color:#c8ffe9;
+      background:rgba(45,224,160,.09); border:1px solid rgba(45,224,160,.22); font-size:12px; font-weight:700;
+    }
+    .live-badge::before { content:""; width:7px; height:7px; border-radius:50%; background:var(--green); box-shadow:0 0 12px var(--green); }
+    .section-heading { gap:18px; }
+    .update-status { white-space:nowrap; }
+    @media (max-width: 760px) {
+      .portfolio-strip { grid-template-columns: 1fr; margin-bottom: 38px; }
+      .update-status { white-space:normal; text-align:right; }
+    }
+</style>
 </head>
 
 <body>
@@ -702,7 +736,8 @@ th {
 <section class="container hero">
 
 <div class="hero-content">
-        <span class="eyebrow">● اطلاعات بازار در یک نگاه</span>
+        <span class="live-badge">نمونه کار آماده ارائه</span>
+                <span class="eyebrow">● اطلاعات بازار در یک نگاه</span>
 
 <h1>
           قیمتهای <span>بازار</span><br>
@@ -734,6 +769,12 @@ th {
       </div>
 
 </section>
+
+<section class="container portfolio-strip" aria-label="ویژگی‌های پروژه">
+      <div class="portfolio-stat"><strong>داده زنده</strong><span>اتصال به منابع خارجی برای دریافت قیمت ارز، رمزارز و فلزات.</span></div>
+      <div class="portfolio-stat"><strong>داشبورد واکنش‌گرا</strong><span>طراحی فارسی و RTL برای موبایل، تبلت و دسکتاپ.</span></div>
+      <div class="portfolio-stat"><strong>نمونه کار آماده ارائه</strong><span>قابل نمایش به مشتری به‌عنوان نمونه‌ای از سایت داده‌محور.</span></div>
+    </section>
 
 <section class="container ticker" id="ticker">
       <div class="ticker-item">
