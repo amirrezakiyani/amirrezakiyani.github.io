@@ -760,6 +760,33 @@ th {
     @keyframes badgeFloat { 0%,100%{margin-top:0} 50%{margin-top:-9px} }
     @media (max-width: 620px) { .three-scene { min-height:340px; height:340px; border-radius:26px; } .three-core { width:145px; height:145px; } .core-symbol { font-size:58px; } .three-orbit { transform:scale(.78); } .floating-badge { font-size:10px; padding:7px 10px; } }
 
+    /* Signature 3D market prism */
+    .three-scene { perspective: 1250px; }
+    .three-scene::after { opacity: .28; }
+    .market-cube { width: 238px; height: 238px; position:relative; transform-style:preserve-3d; transition:transform .16s ease-out; z-index:3; animation:cubeFloat 5s ease-in-out infinite; }
+    .cube-face { position:absolute; inset:0; display:flex; flex-direction:column; justify-content:space-between; padding:25px; border:1px solid rgba(255,255,255,.74); border-radius:28px; overflow:hidden; backface-visibility:hidden; box-shadow:inset 0 1px 0 rgba(255,255,255,.8), inset -18px -20px 40px rgba(55,76,145,.16), 0 30px 55px rgba(72,111,178,.22); }
+    .cube-front { transform:translateZ(119px); background:linear-gradient(145deg,rgba(255,255,255,.88),rgba(198,231,255,.76) 48%,rgba(143,133,237,.77)); }
+    .cube-right { transform:rotateY(90deg) translateZ(119px); background:linear-gradient(145deg,#ffd875,#f59c9f 52%,#a97af0); }
+    .cube-top { transform:rotateX(90deg) translateZ(119px); background:linear-gradient(135deg,#bff5e5,#8bc7ff 55%,#ae91ef); }
+    .cube-face::before { content:""; position:absolute; width:160px; height:160px; right:-65px; top:-65px; border-radius:50%; background:rgba(255,255,255,.3); filter:blur(2px); }
+    .cube-brand { position:relative; color:#21345e; font-size:12px; font-weight:800; letter-spacing:.08em; }
+    .cube-value { position:relative; margin-top:auto; color:#18294e; font-size:39px; font-weight:800; line-height:1; text-shadow:0 5px 16px rgba(255,255,255,.55); }
+    .cube-caption { position:relative; color:#415a84; font-size:11px; }
+    .cube-arrow { position:relative; align-self:flex-start; padding:6px 10px; border-radius:99px; color:#087d70; background:rgba(255,255,255,.55); font-size:11px; font-weight:800; }
+    .cube-right .cube-brand,.cube-right .cube-value,.cube-right .cube-caption { color:#583b4c; }
+    .cube-right .cube-arrow { color:#a55432; }
+    .cube-top .cube-brand,.cube-top .cube-value,.cube-top .cube-caption { color:#174d62; }
+    .cube-shadow { position:absolute; width:230px; height:70px; bottom:37px; border-radius:50%; background:rgba(70,107,166,.18); filter:blur(22px); transform:rotateX(72deg) translateZ(-115px); }
+    .prism-line { position:absolute; width:270px; height:270px; border:1px solid rgba(97,143,218,.22); border-radius:45px; transform:rotateZ(22deg) rotateX(70deg) translateZ(-20px); animation:prismSpin 13s linear infinite; }
+    .prism-line.two { width:315px; height:180px; border-color:rgba(244,174,52,.25); transform:rotateZ(-19deg) rotateY(68deg); animation-direction:reverse; animation-duration:10s; }
+    .floating-chart { position:absolute; left:4%; top:24%; z-index:4; width:116px; height:70px; padding:10px; border:1px solid rgba(255,255,255,.72); border-radius:18px; background:rgba(255,255,255,.68); box-shadow:0 18px 35px rgba(67,100,157,.16); transform:translateZ(160px) rotate(-8deg); }
+    .floating-chart svg { width:100%; height:100%; overflow:visible; }
+    .floating-chart polyline { fill:none; stroke:#f39f21; stroke-width:4; stroke-linecap:round; stroke-linejoin:round; }
+    .floating-chart small { position:absolute; right:10px; bottom:8px; color:#5a6d8c; font-size:9px; }
+    @keyframes cubeFloat { 0%,100%{margin-top:0} 50%{margin-top:-12px} }
+    @keyframes prismSpin { from{rotate:0deg} to{rotate:360deg} }
+    @media (max-width:620px) { .market-cube{width:170px;height:170px}.cube-face{padding:17px;border-radius:20px}.cube-front{transform:translateZ(85px)}.cube-right{transform:rotateY(90deg) translateZ(85px)}.cube-top{transform:rotateX(90deg) translateZ(85px)}.cube-value{font-size:28px}.floating-chart{left:1%;transform:translateZ(110px) scale(.8) rotate(-8deg)}.cube-shadow{width:175px;bottom:24px} }
+
 </style>
 </head>
 
@@ -822,16 +849,18 @@ th {
         </div>
       </div>
 
-<div class="three-scene" aria-label="نمای سه‌بعدی بازار">
-        <div class="three-orbit"></div>
-        <div class="three-orbit orbit-two"></div>
-        <div class="three-orbit orbit-three"></div>
-        <div class="three-core"><span class="core-symbol">₿</span></div>
-        <span class="floating-badge badge-one">رشد امروز <b>+۲.۴٪</b></span>
-        <span class="floating-badge badge-two">بازار زنده · آنلاین</span>
-        <span class="particle particle-one"></span><span class="particle particle-two"></span>
-        <span class="particle particle-three"></span><span class="particle particle-four"></span>
-        <span class="scene-label">برای چرخش، موس را حرکت بده</span>
+<div class="three-scene" aria-label="فرم سه‌بعدی اختصاصی نبض بازار">
+        <div class="prism-line"></div><div class="prism-line two"></div>
+        <div class="cube-shadow"></div>
+        <div class="market-cube">
+          <div class="cube-face cube-front"><span class="cube-brand">NABZ / MARKET</span><span class="cube-arrow">↗ +۲.۴٪ امروز</span><strong class="cube-value">₿ ۱۲۸</strong><span class="cube-caption">نبض لحظه‌ای بازار</span></div>
+          <div class="cube-face cube-right"><span class="cube-brand">GOLD INDEX</span><span class="cube-arrow">LIVE</span><strong class="cube-value">Au</strong><span class="cube-caption">طلای ۱۸ عیار</span></div>
+          <div class="cube-face cube-top"><span class="cube-brand">CURRENCY</span><span class="cube-arrow">ONLINE</span><strong class="cube-value">$ €</strong><span class="cube-caption">ارزهای جهانی</span></div>
+        </div>
+        <div class="floating-chart"><svg viewBox="0 0 100 48" aria-hidden="true"><polyline points="2,39 18,31 32,35 48,17 62,24 78,8 98,13"/></svg><small>روند بازار</small></div>
+        <span class="floating-badge badge-one">داده زنده <b>●</b></span><span class="floating-badge badge-two">سه‌بعدی · روشن · پویا</span>
+        <span class="particle particle-one"></span><span class="particle particle-two"></span><span class="particle particle-three"></span><span class="particle particle-four"></span>
+        <span class="scene-label">فرم را با موس بچرخان</span>
       </div>
 
 </section>
@@ -1294,36 +1323,22 @@ document.querySelectorAll(".nav-list a").forEach(link => {
     });
 
 const threeScene = document.querySelector(".three-scene");
-    const threeCore = document.querySelector(".three-core");
-    const threeOrbits = document.querySelectorAll(".three-orbit");
+    const marketCube = document.querySelector(".market-cube");
+    const prismLines = document.querySelectorAll(".prism-line");
     const tiltItems = document.querySelectorAll(".price-card, .panel, .ticker-item");
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (threeScene && threeCore && !reduceMotion) {
+    if (threeScene && marketCube && !reduceMotion) {
       threeScene.addEventListener("pointermove", (event) => {
         const rect = threeScene.getBoundingClientRect();
-        const x = (event.clientX - rect.left) / rect.width - 0.5;
-        const y = (event.clientY - rect.top) / rect.height - 0.5;
-        threeCore.style.transform = `translate3d(${x * 42}px, ${y * 30}px, 55px) rotateX(${-y * 24}deg) rotateY(${x * 30}deg)`;
-        threeOrbits.forEach((orbit, index) => {
-          const depth = index + 1;
-          orbit.style.transform = `translate3d(${x * depth * 16}px, ${y * depth * 12}px, 0) rotateX(${68 - index * 34}deg) rotateZ(${-18 + x * 18 + index * 20}deg)`;
-        });
-        threeScene.style.setProperty("--mx", `${(x + .5) * 100}%`);
-        threeScene.style.setProperty("--my", `${(y + .5) * 100}%`);
+        const x = (event.clientX - rect.left) / rect.width - .5;
+        const y = (event.clientY - rect.top) / rect.height - .5;
+        marketCube.style.transform = `translate3d(${x * 38}px, ${y * 30}px, 60px) rotateX(${-y * 20}deg) rotateY(${x * 30 + 18}deg) rotateZ(${x * 3}deg)`;
+        prismLines.forEach((line, index) => line.style.transform = `translate3d(${x * (index + 1) * 14}px, ${y * (index + 1) * 10}px, 0) rotateZ(${22 - index * 41 + x * 18}deg) rotateX(${70 - index * 8}deg)`);
+        threeScene.style.setProperty("--mx", `${(x + .5) * 100}%`); threeScene.style.setProperty("--my", `${(y + .5) * 100}%`);
       });
-      threeScene.addEventListener("pointerleave", () => {
-        threeCore.style.transform = "";
-        threeOrbits.forEach(orbit => orbit.style.transform = "");
-        threeScene.style.setProperty("--mx", "50%");
-        threeScene.style.setProperty("--my", "50%");
-      });
+      threeScene.addEventListener("pointerleave", () => { marketCube.style.transform = ""; prismLines.forEach(line => line.style.transform = ""); threeScene.style.setProperty("--mx", "50%"); threeScene.style.setProperty("--my", "50%"); });
       tiltItems.forEach((item) => {
-        item.addEventListener("pointermove", (event) => {
-          const rect = item.getBoundingClientRect();
-          const x = (event.clientX - rect.left) / rect.width - .5;
-          const y = (event.clientY - rect.top) / rect.height - .5;
-          item.style.transform = `perspective(700px) rotateX(${-y * 3}deg) rotateY(${x * 3}deg) translateY(-4px)`;
-        });
+        item.addEventListener("pointermove", (event) => { const rect=item.getBoundingClientRect(); const x=(event.clientX-rect.left)/rect.width-.5; const y=(event.clientY-rect.top)/rect.height-.5; item.style.transform=`perspective(700px) rotateX(${-y*3}deg) rotateY(${x*3}deg) translateY(-4px)`; });
         item.addEventListener("pointerleave", () => item.style.transform = "");
       });
     }
