@@ -804,7 +804,7 @@ th {
 <section class="container dashboard">
 
 <div class="panel" id="chart">
-        <h3>نمودار نمونه تغییرات بازار</h3>
+        <h3>مقایسه قیمت فعلی دارایی‌ها</h3>
 
 <div class="chart-container">
           <canvas id="marketChart"></canvas>
@@ -960,20 +960,20 @@ async function loadPrices() {
       let bitcoinChange = 0;
       if (bitcoinResult.status === "fulfilled") {
         const bitcoinDollar = bitcoinResult.value.bitcoin?.usd || 0;
-        if (bitcoinDollar) market.bitcoin = bitcoinDollar * IRAN_DOLLAR_TOMAN;
+        if (bitcoinDollar) market.bitcoin = bitcoinDollar * market.usd;
         bitcoinChange = bitcoinResult.value.bitcoin?.usd_24h_change || 0;
       }
       const ounceToGram = 31.1035;
       if (goldResult.status === "fulfilled" && goldResult.value.price) {
-        market.gold = (goldResult.value.price / ounceToGram) * IRAN_DOLLAR_TOMAN * .75;
+        market.gold = (goldResult.value.price / ounceToGram) * market.usd * .75;
       }
       if (silverResult.status === "fulfilled" && silverResult.value.price) {
-        market.silver = (silverResult.value.price / ounceToGram) * IRAN_DOLLAR_TOMAN;
+        market.silver = (silverResult.value.price / ounceToGram) * market.usd;
       }
       renderPrices(bitcoinChange);
       const failed = results.filter(result => result.status === "rejected").length;
       const now = new Date().toLocaleString("fa-IR");
-      $("updateStatus").textContent = failed ? `بروزرسانی شد؛ ${failed} منبع پاسخ نداد · ${now}` : "آخرین بروزرسانی: " + now;
+      $("updateStatus").textContent = failed ? "بروزرسانی شد؛ " + failed + " منبع پاسخ نداد · " + dollarSource + " · " + now : "آخرین بروزرسانی: " + dollarSource + " · " + now;
       $("footerTime").textContent = now;
       button.disabled = false;
       button.textContent = "بروزرسانی";
