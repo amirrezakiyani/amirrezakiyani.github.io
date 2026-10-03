@@ -992,14 +992,17 @@ let dollarSource = "";
       }
     }
 
-    async function getMetal(symbol) {
-      const url = "https://api.gold-api.com/price/" + symbol;
-      const data = await fetchJsonWithTimeout(url, 10000);
-      const price = Number(data.price);
-      if (!Number.isFinite(price) || price <= 0) {
-        throw new Error("قیمت " + symbol + " نامعتبر است");
+    async function getMetals() {
+      const data = await fetchJsonWithTimeout("https://xaus.com/api/v1/spot", 10000);
+      const goldPrice = Number(data.xau?.price ?? data.spot_usd_oz);
+      const silverPrice = Number(data.silver_usd_oz);
+      if (!Number.isFinite(goldPrice) || goldPrice <= 0) {
+        throw new Error("قیمت طلا نامعتبر است");
       }
-      return { price };
+      if (!Number.isFinite(silverPrice) || silverPrice <= 0) {
+        throw new Error("قیمت نقره نامعتبر است");
+      }
+      return { goldPrice, silverPrice };
     }
 
     async function loadPrices() {
@@ -1013,11 +1016,10 @@ let dollarSource = "";
           getDollarToman(),
           getExchangeRates(),
           getBitcoin(),
-          getMetal("XAU"),
-          getMetal("XAG")
+          getMetals()
         ]);
 
-        const [dollarResult, exchangeResult, bitcoinResult, goldResult, silverResult] = results;
+        const [dollarResult, exchangeResult, bitcoinResult, metalsResult] = results;
 
         if (dollarResult.status === "fulfilled") {
           market.usd = dollarResult.value;
@@ -1044,15 +1046,11 @@ let dollarSource = "";
 
         const ounceToGram = 31.1035;
 
-        if (goldResult.status === "fulfilled" && market.usd > 0) {
-          market.gold = (goldResult.value.price / ounceToGram) * market.usd * 0.75;
+        if (metalsResult.status === "fulfilled" && market.usd > 0) {
+          market.gold = (metalsResult.value.goldPrice / ounceToGram) * market.usd * 0.75;
+          market.silver = (metalsResult.value.silverPrice / ounceToGram) * market.usd;
         } else {
           market.gold = 0;
-        }
-
-        if (silverResult.status === "fulfilled" && market.usd > 0) {
-          market.silver = (silverResult.value.price / ounceToGram) * market.usd;
-        } else {
           market.silver = 0;
         }
 
@@ -1061,8 +1059,7 @@ let dollarSource = "";
         const failedNames = [];
         if (dollarResult.status === "rejected") failedNames.push("دلار");
         if (exchangeResult.status === "rejected") failedNames.push("یورو");
-        if (goldResult.status === "rejected") failedNames.push("طلا");
-        if (silverResult.status === "rejected") failedNames.push("نقره");
+        if (metalsResult.status === "rejected") failedNames.push("طلا و نقره");
         if (bitcoinResult.status === "rejected") failedNames.push("بیتکوین");
 
         const now = new Date().toLocaleString("fa-IR");
