@@ -946,7 +946,7 @@ function formatToman(value) {
       return Math.round(value).toLocaleString("fa-IR");
     }
 
-async function getDollarToman() {
+let dollarSource = "";\n\n    async function getDollarToman() {
       const sources = [
         "https://apiv2.nobitex.ir/v3/orderbook/USDTIRT",
         "https://api.binance.com/api/v3/ticker/price?symbol=USDTIRT"
@@ -960,7 +960,7 @@ async function getDollarToman() {
           const price = Number(data.lastTradePrice || data.price);
           if (Number.isFinite(price) && price > 0) {
             // Nobitex قیمت را به ریال می‌دهد؛ Binance در صورت دسترسی قیمت را به تومان/ریال متناسب با بازار برمی‌گرداند.
-            return url.includes("nobitex") ? price / 10 : price;
+            dollarSource = url.includes("nobitex") ? "نوبیتکس" : "Binance";\n            return url.includes("nobitex") ? price / 10 : price;
           }
         } catch (_) {}
       }
@@ -1024,7 +1024,7 @@ async function loadPrices() {
         getMetal("XAU"),
         getMetal("XAG")
       ]);
-      const [exchangeResult, bitcoinResult, goldResult, silverResult] = results;
+      const [dollarResult, exchangeResult, bitcoinResult, goldResult, silverResult] = results;\r\n      if (dollarResult.status === "fulfilled") {\r\n        market.usd = dollarResult.value;\r\n      } else {\r\n        market.usd = 0;\r\n        dollarSource = "خطا در منبع دلار";\r\n      }
       if (exchangeResult.status === "fulfilled") {
         const euroToDollar = exchangeResult.value.rates?.EUR || 0;
         if (euroToDollar) market.eur = IRAN_DOLLAR_TOMAN / euroToDollar;
