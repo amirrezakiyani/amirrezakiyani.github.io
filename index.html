@@ -238,13 +238,14 @@ h1 span {
 
 .three-coin {
       width: 225px;
-      height: 225px;
+      height: 245px;
       position: relative;
       display: grid;
       place-items: center;
       border-radius: 50%;
       transform-style: preserve-3d;
       animation: floating 5s ease-in-out infinite;
+      transition: transform .18s ease-out;
       background:
         radial-gradient(
           circle at 30% 25%,
@@ -327,6 +328,12 @@ h1 span {
 50% {
         transform: translateY(-18px) rotateY(12deg);
       }
+    }
+
+.three-coin::marker { content: none; }
+
+@media (prefers-reduced-motion: reduce) {
+      .three-coin, .particle { animation: none !important; }
     }
 
 @keyframes particleMove {
@@ -1194,7 +1201,21 @@ document.querySelectorAll(".nav-list a").forEach(link => {
       });
     });
 
-$("refreshButton").addEventListener("click", loadPrices);
+const threeScene = document.querySelector(".three-scene");
+    const threeCoin = document.querySelector(".three-coin");
+    if (threeScene && threeCoin && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      threeScene.addEventListener("pointermove", (event) => {
+        const rect = threeScene.getBoundingClientRect();
+        const x = (event.clientX - rect.left) / rect.width - 0.5;
+        const y = (event.clientY - rect.top) / rect.height - 0.5;
+        threeCoin.style.transform = `translate3d(${x * 26}px, ${y * 18}px, 0) rotateX(${-y * 12}deg) rotateY(${x * 22}deg)`;
+      });
+      threeScene.addEventListener("pointerleave", () => {
+        threeCoin.style.transform = "";
+      });
+    }
+
+    $("refreshButton").addEventListener("click", loadPrices);
 
 loadPrices();
     try { createChart(); } catch (error) { console.warn("خطا در نمودار:", error); }
