@@ -992,19 +992,49 @@ let dollarSource = "";
       }
     }
 
-    async function getMetals() {
-      const data = await fetchJsonWithTimeout("https://xaus.com/api/v1/spot", 10000);
-      const goldPrice = Number(data.xau?.price ?? data.spot_usd_oz);
-      const silverPrice = Number(data.silver_usd_oz);
-      if (!Number.isFinite(goldPrice) || goldPrice <= 0) {
-        throw new Error("قیمت طلا نامعتبر است");
+    async function getMetal(symbol) {
+      const sources = [
+        "https://api.gold-api.com/price/" + symbol,
+        "https://goldmarketdaily.com/wp-json/gmd/v1/metals"
+      ];
+
+      let lastError = null;
+
+      for (const url of sources) {
+        try {
+          const data = await fetchJsonWithTimeout(url, 10000);
+
+          if (url.includes("gold-api.com")) {
+            const price = Number(data.price);
+            if (Number.isFinite(price) && price > 0) return price;
+          } else {
+            const key = symbol === "XAU" ? "gold" : "silver";
+            const price = Number(data.metals?.[key]);
+            if (Number.isFinite(price) && price > 0) return price;
+          }
+        } catch (error) {
+          lastError = error;
+        }
       }
-      if (!Number.isFinite(silverPrice) || silverPrice <= 0) {
-        throw new Error("قیمت نقره نامعتبر است");
-      }
-      return { goldPrice, silverPrice };
+
+      throw lastError || new Error("منبع قیمت " + symbol + " در دسترس نیست");
     }
 
+    async function getMetals() {
+      const results = await Promise.allSettled([
+        getMetal("XAU"),
+        getMetal("XAG")
+      ]);
+
+      if (results[0].status !== "fulfilled" || results[1].status !== "fulfilled") {
+        throw new Error("قیمت طلا یا نقره دریافت نشد");
+      }
+
+      return {
+        goldPrice: results[0].value,
+        silverPrice: results[1].value
+      };
+    }
     async function loadPrices() {
       const button = $("refreshButton");
       button.disabled = true;
