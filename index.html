@@ -929,10 +929,10 @@ th {
     */
     // نرخ پایهٔ بازار آزاد؛ قیمت‌های جهانی با دکمهٔ بروزرسانی زنده دریافت می‌شوند.
     // این مقدار برای تبدیل قیمت جهانی به تومان استفاده می‌شود.
-    const IRAN_DOLLAR_TOMAN = 233830;
+    const IRAN_DOLLAR_TOMAN = 0;
 
 const market = {
-      usd: IRAN_DOLLAR_TOMAN,
+      usd: 0,
       eur: 0,
       gold: 0,
       silver: 0,
@@ -946,12 +946,13 @@ function formatToman(value) {
       return Math.round(value).toLocaleString("fa-IR");
     }
 
-let dollarSource = "";\n\n    async function getDollarToman() {
+let dollarSource = "";
+
+    async function getDollarToman() {
       const sources = [
         "https://apiv2.nobitex.ir/v3/orderbook/USDTIRT",
         "https://api.binance.com/api/v3/ticker/price?symbol=USDTIRT"
       ];
-
       for (const url of sources) {
         try {
           const response = await fetch(url, { cache: "no-store" });
@@ -959,8 +960,8 @@ let dollarSource = "";\n\n    async function getDollarToman() {
           const data = await response.json();
           const price = Number(data.lastTradePrice || data.price);
           if (Number.isFinite(price) && price > 0) {
-            // Nobitex قیمت را به ریال می‌دهد؛ Binance در صورت دسترسی قیمت را به تومان/ریال متناسب با بازار برمی‌گرداند.
-            dollarSource = url.includes("nobitex") ? "نوبیتکس" : "Binance";\n            return url.includes("nobitex") ? price / 10 : price;
+            dollarSource = url.includes("nobitex") ? "نوبیتکس" : "Binance";
+            return url.includes("nobitex") ? price / 10 : price;
           }
         } catch (_) {}
       }
@@ -968,84 +969,85 @@ let dollarSource = "";\n\n    async function getDollarToman() {
     }
 
     async function getExchangeRates() {
-      const response = await fetch(
-        "https://open.er-api.com/v6/latest/USD"
-      );
-
-if (!response.ok) {
-        throw new Error("خطا در دریافت نرخ ارز");
-      }
-
-return response.json();
+      const response = await fetch("https://open.er-api.com/v6/latest/USD", { cache: "no-store" });
+      if (!response.ok) throw new Error("خطا در دریافت نرخ ارز");
+      return response.json();
     }
 
-async function getBitcoin() {
-      const response = await fetch(
-        "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true"
-      );
-
-if (!response.ok) {
-        throw new Error("خطا در دریافت قیمت بیتکوین");
-      }
-
-return response.json();
+    async function getBitcoin() {
+      const response = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true", { cache: "no-store" });
+      if (!response.ok) throw new Error("خطا در دریافت قیمت بیتکوین");
+      return response.json();
     }
 
-async function getMetal(symbol) {
-      const urls = [
-        "https://api.gold-api.com/price/" + symbol,
-        "https://api.metals.live/v1/spot/" + symbol
-      ];
-
-      for (const url of urls) {
-        try {
-          const response = await fetch(url, { cache: "no-store" });
-          if (!response.ok) continue;
-          const data = await response.json();
-          const price = Number(
-            data?.price ??
-            data?.[0]?.[symbol.toLowerCase()] ??
-            data?.[0]?.price
-          );
-          if (Number.isFinite(price) && price > 0) return { price };
-        } catch (_) {}
-      }
-      throw new Error("خطا در دریافت قیمت فلز");
+    async function getMetal(symbol) {
+      const response = await fetch("https://api.gold-api.com/price/" + symbol, { cache: "no-store" });
+      if (!response.ok) throw new Error("خطا در دریافت قیمت " + symbol);
+      const data = await response.json();
+      const price = Number(data.price);
+      if (!Number.isFinite(price) || price <= 0) throw new Error("قیمت " + symbol + " نامعتبر است");
+      return { price };
     }
 
-async function loadPrices() {
+    async function loadPrices() {
       const button = $("refreshButton");
       button.disabled = true;
       button.textContent = "در حال بروزرسانی...";
       $("updateStatus").textContent = "در حال دریافت اطلاعات...";
+
       const results = await Promise.allSettled([
+        getDollarToman(),
         getExchangeRates(),
         getBitcoin(),
         getMetal("XAU"),
         getMetal("XAG")
       ]);
-      const [dollarResult, exchangeResult, bitcoinResult, goldResult, silverResult] = results;\r\n      if (dollarResult.status === "fulfilled") {\r\n        market.usd = dollarResult.value;\r\n      } else {\r\n        market.usd = 0;\r\n        dollarSource = "خطا در منبع دلار";\r\n      }
-      if (exchangeResult.status === "fulfilled") {
-        const euroToDollar = exchangeResult.value.rates?.EUR || 0;
-        if (euroToDollar) market.eur = IRAN_DOLLAR_TOMAN / euroToDollar;
+
+      const [dollarResult, exchangeResult, bitcoinResult, goldResult, silverResult] = results;
+
+      if (dollarResult.status === "fulfilled") {
+        market.usd = dollarResult.value;
+      } else {
+        market.usd = 0;
+        dollarSource = "خطا در منبع دلار";
       }
+
+      if (exchangeResult.status === "fulfilled" && market.usd > 0) {
+        const euroToDollar = Number(exchangeResult.value.rates?.EUR || 0);
+        if (euroToDollar > 0) market.eur = market.usd / euroToDollar;
+      } else {
+        market.eur = 0;
+      }
+
       let bitcoinChange = 0;
-      if (bitcoinResult.status === "fulfilled") {
-        const bitcoinDollar = bitcoinResult.value.bitcoin?.usd || 0;
-        if (bitcoinDollar) market.bitcoin = bitcoinDollar * market.usd;
-        bitcoinChange = bitcoinResult.value.bitcoin?.usd_24h_change || 0;
+      if (bitcoinResult.status === "fulfilled" && market.usd > 0) {
+        const bitcoinDollar = Number(bitcoinResult.value.bitcoin?.usd || 0);
+        if (bitcoinDollar > 0) market.bitcoin = bitcoinDollar * market.usd;
+        bitcoinChange = Number(bitcoinResult.value.bitcoin?.usd_24h_change || 0);
+      } else {
+        market.bitcoin = 0;
       }
+
       const ounceToGram = 31.1035;
-      if (goldResult.status === "fulfilled" && Number(goldResult.value.price) > 0) {
-        market.gold = (Number(goldResult.value.price) / ounceToGram) * market.usd * .75;
+      if (goldResult.status === "fulfilled" && market.usd > 0) {
+        market.gold = (goldResult.value.price / ounceToGram) * market.usd * 0.75;
+      } else {
+        market.gold = 0;
       }
-      if (silverResult.status === "fulfilled" && Number(silverResult.value.price) > 0) {
-        market.silver = (Number(silverResult.value.price) / ounceToGram) * market.usd;
+
+      if (silverResult.status === "fulfilled" && market.usd > 0) {
+        market.silver = (silverResult.value.price / ounceToGram) * market.usd;
+      } else {
+        market.silver = 0;
       }
+
       renderPrices(bitcoinChange);
+
       const failed = results.filter(result => result.status === "rejected").length;
       const now = new Date().toLocaleString("fa-IR");
-      $("updateStatus").textContent = failed ? "بروزرسانی شد؛ " + failed + " منبع پاسخ نداد · " + dollarSource + " · " + now : "آخرین بروزرسانی: " + dollarSource + " · " + now;
+      $("updateStatus").textContent = failed
+        ? "بروزرسانی ناقص؛ " + failed + " منبع پاسخ نداد · " + dollarSource + " · " + now
+        : "آخرین بروزرسانی: " + dollarSource + " · " + now;
       $("footerTime").textContent = now;
       button.disabled = false;
       button.textContent = "بروزرسانی";
