@@ -993,20 +993,13 @@ let dollarSource = "";
     }
 
     async function getMetal(symbol) {
-      const sources = [
-        "https://api.gold-api.com/price/" + symbol,
-        "https://www.goldapi.io/api/" + symbol + "/USD"
-      ];
-
-      for (const url of sources) {
-        try {
-          const data = await fetchJsonWithTimeout(url, 10000);
-          const price = Number(data.price ?? data.close ?? data.rate);
-          if (Number.isFinite(price) && price > 0) return { price };
-        } catch (_) {}
+      const url = "https://api.gold-api.com/price/" + symbol;
+      const data = await fetchJsonWithTimeout(url, 10000);
+      const price = Number(data.price);
+      if (!Number.isFinite(price) || price <= 0) {
+        throw new Error("قیمت " + symbol + " نامعتبر است");
       }
-
-      throw new Error("قیمت " + symbol + " در دسترس نیست");
+      return { price };
     }
 
     async function loadPrices() {
