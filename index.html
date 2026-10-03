@@ -1094,6 +1094,10 @@ $("marketTable").innerHTML = items.map(item => `
     }
 
 function createChart() {
+      if (typeof Chart === "undefined") {
+        console.warn("Chart.js در دسترس نیست؛ نمودار بدون قیمت‌ها نادیده گرفته می‌شود.");
+        return;
+      }
       const context = $("marketChart").getContext("2d");
 
 new Chart(context, {
@@ -1178,8 +1182,8 @@ document.querySelectorAll(".nav-list a").forEach(link => {
 
 $("refreshButton").addEventListener("click", loadPrices);
 
-createChart();
-    loadPrices();
+loadPrices();
+    try { createChart(); } catch (error) { console.warn("خطا در نمودار:", error); }
 
 // بروزرسانی خودکار هر پنج دقیقه
     setInterval(loadPrices, 300000);
