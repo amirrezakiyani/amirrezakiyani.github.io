@@ -946,7 +946,28 @@ function formatToman(value) {
       return Math.round(value).toLocaleString("fa-IR");
     }
 
-async function getExchangeRates() {
+async function getDollarToman() {
+      const sources = [
+        "https://apiv2.nobitex.ir/v3/orderbook/USDTIRT",
+        "https://api.binance.com/api/v3/ticker/price?symbol=USDTIRT"
+      ];
+
+      for (const url of sources) {
+        try {
+          const response = await fetch(url, { cache: "no-store" });
+          if (!response.ok) continue;
+          const data = await response.json();
+          const price = Number(data.lastTradePrice || data.price);
+          if (Number.isFinite(price) && price > 0) {
+            // Nobitex قیمت را به ریال می‌دهد؛ Binance در صورت دسترسی قیمت را به تومان/ریال متناسب با بازار برمی‌گرداند.
+            return url.includes("nobitex") ? price / 10 : price;
+          }
+        } catch (_) {}
+      }
+      throw new Error("منبع نرخ دلار در دسترس نیست");
+    }
+
+    async function getExchangeRates() {
       const response = await fetch(
         "https://open.er-api.com/v6/latest/USD"
       );
