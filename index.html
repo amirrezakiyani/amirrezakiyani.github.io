@@ -692,6 +692,74 @@ th {
       }
     }
 
+    /* Bright glassmorphism redesign */
+    :root {
+      --bg: #f7fbff;
+      --bg-light: #ffffff;
+      --card: rgba(255,255,255,.82);
+      --card-light: rgba(255,255,255,.72);
+      --border: rgba(38, 83, 132, .13);
+      --text: #17233d;
+      --muted: #6c7b95;
+      --blue: #3d8bfd;
+      --purple: #8c62ff;
+      --gold: #f5a623;
+      --green: #12ad83;
+      --red: #ed5b71;
+      --ink: #17233d;
+      --shadow: 0 20px 60px rgba(74, 110, 157, .14);
+    }
+    body {
+      color: var(--text);
+      background:
+        radial-gradient(circle at 8% 4%, rgba(98,191,255,.26), transparent 27%),
+        radial-gradient(circle at 91% 7%, rgba(214,174,255,.28), transparent 24%),
+        radial-gradient(circle at 50% 83%, rgba(255,218,147,.18), transparent 30%),
+        var(--bg);
+    }
+    .site-header { background: rgba(255,255,255,.75); border-bottom-color: rgba(52,88,130,.10); }
+    .logo { color: var(--ink); }
+    .logo-icon { color: white; background: linear-gradient(135deg,#4d9dff,#8c62ff); box-shadow: 0 10px 24px rgba(83,139,255,.28); }
+    .nav-list { color: #6d7b92; }
+    .nav-list a:hover { color: var(--blue); }
+    .button { color: white; background: linear-gradient(135deg,#398cff,#8561f7); box-shadow: 0 10px 24px rgba(75,126,239,.18); }
+    .button-outline { color: #39506f; border-color: rgba(61,139,253,.18); background: rgba(255,255,255,.8); }
+    .eyebrow { color: #159d7b; font-weight: 700; }
+    h1 span { color: #eea51c; text-shadow: 0 10px 28px rgba(245,166,35,.18); }
+    .hero-description, .section-heading p, .update-status, .card-title, .asset-unit, .info-section { color: #6c7b95; }
+    .three-scene {
+      min-height: 440px; height: 440px; border-radius: 38px; overflow: hidden;
+      background: linear-gradient(145deg, rgba(255,255,255,.72), rgba(238,247,255,.52));
+      border: 1px solid rgba(89,145,205,.13); box-shadow: var(--shadow); isolation: isolate;
+      --mx: 50%; --my: 50%;
+    }
+    .three-scene::before { width: 500px; height: 500px; filter: blur(2px); background: radial-gradient(circle at var(--mx) var(--my), rgba(96,183,255,.36), rgba(173,125,255,.14) 36%, transparent 70%); transform: none; z-index:-2; }
+    .three-scene::after { content:""; position:absolute; inset:0; opacity:.42; background-image: radial-gradient(rgba(60,125,193,.28) 1px, transparent 1px); background-size: 25px 25px; mask-image: linear-gradient(to bottom, black, transparent 80%); z-index:-1; }
+    .three-orbit { border-color: rgba(72,137,226,.38); box-shadow: 0 0 35px rgba(86,155,244,.16); }
+    .three-orbit.orbit-two { border-color: rgba(245,166,35,.48); }
+    .three-orbit.orbit-three { border-color: rgba(140,98,255,.34); }
+    .three-core { width: 190px; height:190px; background: radial-gradient(circle at 30% 22%, #fff 0 4%, #c7efff 12%, #68b8ff 30%, #6679e7 58%, #7560bf 78%); box-shadow: inset -28px -32px 55px rgba(44,52,128,.28), inset 16px 15px 28px rgba(255,255,255,.55), 0 20px 45px rgba(69,137,231,.3), 0 0 90px rgba(154,111,255,.2); }
+    .three-core::before { border-color: rgba(255,255,255,.5); }
+    .three-core::after { border-color: rgba(255,190,62,.9); }
+    .core-symbol { color: #fff6d1; text-shadow: 0 0 18px rgba(255,190,62,.6), 0 5px 24px rgba(35,55,125,.32); }
+    .scene-label { color: #49617e; background: rgba(255,255,255,.72); border-color: rgba(74,126,183,.15); box-shadow: 0 8px 30px rgba(59,100,155,.12); }
+    .particle { background: #f5ad2d; box-shadow: 0 0 15px #ffc95c; }
+    .ticker { border-color: rgba(38,83,132,.12); }
+    .ticker-item, .price-card, .panel { border-color: rgba(38,83,132,.12); background: rgba(255,255,255,.78); box-shadow: 0 14px 38px rgba(83,120,165,.08); backdrop-filter: blur(14px); }
+    .price-card:hover { border-color: rgba(61,139,253,.35); box-shadow: 0 18px 42px rgba(83,120,165,.16); }
+    .asset-change { color: #0b9d77; background: rgba(18,173,131,.10); }
+    .asset-change.down { color: #dd526b; background: rgba(237,91,113,.10); }
+    .advertisement { border-color: rgba(61,139,253,.28); background: linear-gradient(135deg, rgba(91,171,255,.10), rgba(184,142,255,.13)); }
+    .advertisement strong, .info-section h2, .info-section h3 { color: var(--ink); }
+    th, td { border-bottom-color: rgba(38,83,132,.10); }
+    th { color: #6c7b95; }
+    .online { color: #10a67d; }
+    footer { border-top-color: rgba(38,83,132,.12); }
+    .floating-badge { position:absolute; z-index:4; padding:9px 14px; border:1px solid rgba(62,118,184,.14); border-radius:16px; color:#49617e; background:rgba(255,255,255,.8); box-shadow:0 15px 30px rgba(63,101,149,.14); font-size:12px; font-weight:700; backdrop-filter:blur(12px); transform:translateZ(70px); animation: badgeFloat 4s ease-in-out infinite; }
+    .badge-one { top:14%; right:10%; } .badge-two { left:8%; bottom:17%; animation-delay:-2s; }
+    @keyframes badgeFloat { 0%,100%{margin-top:0} 50%{margin-top:-9px} }
+    @media (max-width: 620px) { .three-scene { min-height:340px; height:340px; border-radius:26px; } .three-core { width:145px; height:145px; } .core-symbol { font-size:58px; } .three-orbit { transform:scale(.78); } .floating-badge { font-size:10px; padding:7px 10px; } }
+
 </style>
 </head>
 
@@ -737,7 +805,7 @@ th {
         <span class="eyebrow">● اطلاعات بازار در یک نگاه</span>
 
 <h1>
-          قیمتهای <span>بازار</span><br>
+          نبض <span>روشن بازار</span><br>
           همیشه همراه تو
         </h1>
 
@@ -754,15 +822,16 @@ th {
         </div>
       </div>
 
-<div class="three-scene">
-        <div class="three-coin">
-          <span class="coin-symbol">₿</span>
-        </div>
-
-<span class="particle particle-one"></span>
-        <span class="particle particle-two"></span>
-        <span class="particle particle-three"></span>
-        <span class="particle particle-four"></span>
+<div class="three-scene" aria-label="نمای سه‌بعدی بازار">
+        <div class="three-orbit"></div>
+        <div class="three-orbit orbit-two"></div>
+        <div class="three-orbit orbit-three"></div>
+        <div class="three-core"><span class="core-symbol">₿</span></div>
+        <span class="floating-badge badge-one">رشد امروز <b>+۲.۴٪</b></span>
+        <span class="floating-badge badge-two">بازار زنده · آنلاین</span>
+        <span class="particle particle-one"></span><span class="particle particle-two"></span>
+        <span class="particle particle-three"></span><span class="particle particle-four"></span>
+        <span class="scene-label">برای چرخش، موس را حرکت بده</span>
       </div>
 
 </section>
@@ -1162,13 +1231,13 @@ datasets: [
             {
               label: "شاخص تغییرات بازار",
               data: [42, 48, 45, 58, 55, 68, 74],
-              borderColor: "#61a8ff",
-              backgroundColor: "rgba(97, 168, 255, .13)",
+              borderColor: "#4d91f7",
+              backgroundColor: "rgba(77, 145, 247, .13)",
               borderWidth: 3,
               fill: true,
               tension: .4,
               pointRadius: 4,
-              pointBackgroundColor: "#ffd166"
+              pointBackgroundColor: "#f5a623"
             }
           ]
         },
@@ -1180,7 +1249,7 @@ options: {
 plugins: {
             legend: {
               labels: {
-                color: "#f7faff",
+                color: "#334e72",
                 font: {
                   family: "Vazirmatn"
                 }
@@ -1191,22 +1260,22 @@ plugins: {
 scales: {
             x: {
               ticks: {
-                color: "#9daaca",
+                color: "#71819b",
                 font: {
                   family: "Vazirmatn"
                 }
               },
               grid: {
-                color: "rgba(255,255,255,.06)"
+                color: "rgba(76,120,171,.12)"
               }
             },
 
 y: {
               ticks: {
-                color: "#9daaca"
+                color: "#71819b"
               },
               grid: {
-                color: "rgba(255,255,255,.06)"
+                color: "rgba(76,120,171,.12)"
               }
             }
           }
@@ -1227,7 +1296,9 @@ document.querySelectorAll(".nav-list a").forEach(link => {
 const threeScene = document.querySelector(".three-scene");
     const threeCore = document.querySelector(".three-core");
     const threeOrbits = document.querySelectorAll(".three-orbit");
-    if (threeScene && threeCore && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const tiltItems = document.querySelectorAll(".price-card, .panel, .ticker-item");
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (threeScene && threeCore && !reduceMotion) {
       threeScene.addEventListener("pointermove", (event) => {
         const rect = threeScene.getBoundingClientRect();
         const x = (event.clientX - rect.left) / rect.width - 0.5;
@@ -1243,8 +1314,17 @@ const threeScene = document.querySelector(".three-scene");
       threeScene.addEventListener("pointerleave", () => {
         threeCore.style.transform = "";
         threeOrbits.forEach(orbit => orbit.style.transform = "");
-        threeScene.style.removeProperty("--mx");
-        threeScene.style.removeProperty("--my");
+        threeScene.style.setProperty("--mx", "50%");
+        threeScene.style.setProperty("--my", "50%");
+      });
+      tiltItems.forEach((item) => {
+        item.addEventListener("pointermove", (event) => {
+          const rect = item.getBoundingClientRect();
+          const x = (event.clientX - rect.left) / rect.width - .5;
+          const y = (event.clientY - rect.top) / rect.height - .5;
+          item.style.transform = `perspective(700px) rotateX(${-y * 3}deg) rotateY(${x * 3}deg) translateY(-4px)`;
+        });
+        item.addEventListener("pointerleave", () => item.style.transform = "");
       });
     }
 
