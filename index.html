@@ -992,22 +992,21 @@ let dollarSource = "";
       }
     }
 
-    async function getMetals() {
-      try {
-        const [gold, silver] = await Promise.all([
-          fetchJsonWithTimeout("https://api.gold-api.com/price/XAU"),
-          fetchJsonWithTimeout("https://api.gold-api.com/price/XAG")
-        ]);
-        const goldPrice = Number(gold.price);
-        const silverPrice = Number(silver.price);
-        if (goldPrice > 0 && silverPrice > 0) return { goldPrice, silverPrice };
-      } catch (_) {}
+    async function getMetal(symbol) {
+      const sources = [
+        "https://api.gold-api.com/price/" + symbol,
+        "https://www.goldapi.io/api/" + symbol + "/USD"
+      ];
 
-      const data = await fetchJsonWithTimeout("https://xaus.com/api/v1/spot");
-      const goldPrice = Number(data.xau?.price ?? data.gold?.price ?? data.spot_usd_oz);
-      const silverPrice = Number(data.xag?.price ?? data.silver?.price);
-      if (!(goldPrice > 0) || !(silverPrice > 0)) throw new Error("قیمت طلا یا نقره نامعتبر است");
-      return { goldPrice, silverPrice };
+      for (const url of sources) {
+        try {
+          const data = await fetchJsonWithTimeout(url, 10000);
+          const price = Number(data.price ?? data.close ?? data.rate);
+          if (Number.isFinite(price) && price > 0) return { price };
+        } catch (_) {}
+      }
+
+      throw new Error("قیمت " + symbol + " در دسترس نیست");
     }
 
     async function loadPrices() {
@@ -1016,62 +1015,75 @@ let dollarSource = "";
       button.textContent = "در حال بروزرسانی...";
       $("updateStatus").textContent = "در حال دریافت اطلاعات...";
 
-      const results = await Promise.allSettled([
-        getDollarToman(),
-        getExchangeRates(),
-        getBitcoin(),
-        getMetal("XAU"),
-        getMetal("XAG")
-      ]);
+      try {
+        const results = await Promise.allSettled([
+          getDollarToman(),
+          getExchangeRates(),
+          getBitcoin(),
+          getMetal("XAU"),
+          getMetal("XAG")
+        ]);
 
-      const [dollarResult, exchangeResult, bitcoinResult, metalsResult] = results;
+        const [dollarResult, exchangeResult, bitcoinResult, goldResult, silverResult] = results;
 
-      if (dollarResult.status === "fulfilled") {
-        market.usd = dollarResult.value;
-      } else {
-        market.usd = 0;
-        dollarSource = "خطا در منبع دلار";
+        if (dollarResult.status === "fulfilled") {
+          market.usd = dollarResult.value;
+        } else {
+          market.usd = 0;
+          dollarSource = "خطا در منبع دلار";
+        }
+
+        if (exchangeResult.status === "fulfilled" && market.usd > 0) {
+          const euroToDollar = Number(exchangeResult.value.rates?.EUR || 0);
+          market.eur = euroToDollar > 0 ? market.usd / euroToDollar : 0;
+        } else {
+          market.eur = 0;
+        }
+
+        let bitcoinChange = 0;
+        if (bitcoinResult.status === "fulfilled" && market.usd > 0) {
+          const bitcoinDollar = Number(bitcoinResult.value.bitcoin?.usd || 0);
+          market.bitcoin = bitcoinDollar > 0 ? bitcoinDollar * market.usd : 0;
+          bitcoinChange = Number(bitcoinResult.value.bitcoin?.usd_24h_change || 0);
+        } else {
+          market.bitcoin = 0;
+        }
+
+        const ounceToGram = 31.1035;
+
+        if (goldResult.status === "fulfilled" && market.usd > 0) {
+          market.gold = (goldResult.value.price / ounceToGram) * market.usd * 0.75;
+        } else {
+          market.gold = 0;
+        }
+
+        if (silverResult.status === "fulfilled" && market.usd > 0) {
+          market.silver = (silverResult.value.price / ounceToGram) * market.usd;
+        } else {
+          market.silver = 0;
+        }
+
+        renderPrices(bitcoinChange);
+
+        const failedNames = [];
+        if (dollarResult.status === "rejected") failedNames.push("دلار");
+        if (exchangeResult.status === "rejected") failedNames.push("یورو");
+        if (goldResult.status === "rejected") failedNames.push("طلا");
+        if (silverResult.status === "rejected") failedNames.push("نقره");
+        if (bitcoinResult.status === "rejected") failedNames.push("بیتکوین");
+
+        const now = new Date().toLocaleString("fa-IR");
+        $("updateStatus").textContent = failedNames.length
+          ? "منبع در دسترس نبود: " + failedNames.join("، ") + " · " + now
+          : "آخرین بروزرسانی: " + dollarSource + " · " + now;
+        $("footerTime").textContent = now;
+      } catch (error) {
+        console.error("خطا در بروزرسانی بازار:", error);
+        $("updateStatus").textContent = "خطا در بروزرسانی؛ دوباره تلاش کنید.";
+      } finally {
+        button.disabled = false;
+        button.textContent = "بروزرسانی";
       }
-
-      if (exchangeResult.status === "fulfilled" && market.usd > 0) {
-        const euroToDollar = Number(exchangeResult.value.rates?.EUR || 0);
-        if (euroToDollar > 0) market.eur = market.usd / euroToDollar;
-      } else {
-        market.eur = 0;
-      }
-
-      let bitcoinChange = 0;
-      if (bitcoinResult.status === "fulfilled" && market.usd > 0) {
-        const bitcoinDollar = Number(bitcoinResult.value.bitcoin?.usd || 0);
-        if (bitcoinDollar > 0) market.bitcoin = bitcoinDollar * market.usd;
-        bitcoinChange = Number(bitcoinResult.value.bitcoin?.usd_24h_change || 0);
-      } else {
-        market.bitcoin = 0;
-      }
-
-      const ounceToGram = 31.1035;
-      if (goldResult.status === "fulfilled" && market.usd > 0) {
-        market.gold = (goldResult.value.price / ounceToGram) * market.usd * 0.75;
-      } else {
-        market.gold = 0;
-      }
-
-      if (silverResult.status === "fulfilled" && market.usd > 0) {
-        market.silver = (silverResult.value.price / ounceToGram) * market.usd;
-      } else {
-        market.silver = 0;
-      }
-
-      renderPrices(bitcoinChange);
-
-      const failed = results.filter(result => result.status === "rejected").length;
-      const now = new Date().toLocaleString("fa-IR");
-      $("updateStatus").textContent = failed
-        ? "بروزرسانی ناقص؛ " + failed + " منبع پاسخ نداد · " + dollarSource + " · " + now
-        : "آخرین بروزرسانی: " + dollarSource + " · " + now;
-      $("footerTime").textContent = now;
-      button.disabled = false;
-      button.textContent = "بروزرسانی";
     }
 
 function renderPrices(bitcoinChange) {
