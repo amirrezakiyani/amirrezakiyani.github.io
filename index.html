@@ -233,61 +233,114 @@ h1 span {
       position: relative;
       display: grid;
       place-items: center;
-      perspective: 900px;
+      perspective: 1100px;
+      overflow: visible;
+      isolation: isolate;
     }
 
-.three-coin {
-      width: 225px;
-      height: 245px;
+    .three-scene::before {
+      content: "";
+      position: absolute;
+      width: 330px;
+      height: 330px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(97,168,255,.28), rgba(169,135,255,.12) 42%, transparent 72%);
+      filter: blur(12px);
+      z-index: -2;
+      transform: translateZ(-100px);
+    }
+
+    .three-orbit {
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      border: 1px solid rgba(97,168,255,.35);
+      border-radius: 50%;
+      transform-style: preserve-3d;
+      animation: orbitSpin 10s linear infinite;
+      box-shadow: 0 0 35px rgba(97,168,255,.15);
+    }
+
+    .three-orbit.orbit-two {
+      width: 350px;
+      height: 170px;
+      border-color: rgba(255,209,102,.45);
+      transform: rotateX(68deg) rotateZ(-18deg);
+      animation-duration: 7s;
+      animation-direction: reverse;
+    }
+
+    .three-orbit.orbit-three {
+      width: 190px;
+      height: 350px;
+      border-color: rgba(169,135,255,.4);
+      transform: rotateY(68deg) rotateZ(24deg);
+      animation-duration: 12s;
+    }
+
+    .three-core {
+      width: 205px;
+      height: 205px;
       position: relative;
       display: grid;
       place-items: center;
       border-radius: 50%;
       transform-style: preserve-3d;
-      animation: floating 5s ease-in-out infinite;
-      transition: transform .18s ease-out;
+      transition: transform .12s ease-out;
       background:
-        radial-gradient(
-          circle at 30% 25%,
-          #e1f4ff,
-          #61a8ff 23%,
-          #293d91 55%,
-          #111735 76%
-        );
+        radial-gradient(circle at 28% 22%, #ffffff 0 4%, #9ee7ff 10%, #61a8ff 29%, #3848a8 55%, #111735 78%);
       box-shadow:
-        inset -30px -25px 55px rgba(0, 0, 0, .45),
-        0 0 70px rgba(97, 168, 255, .65),
-        0 25px 80px rgba(0, 0, 0, .35);
+        inset -28px -32px 55px rgba(0,0,0,.52),
+        inset 16px 15px 28px rgba(255,255,255,.24),
+        0 0 45px rgba(97,168,255,.7),
+        0 0 110px rgba(169,135,255,.3);
+      animation: coreFloat 5s ease-in-out infinite;
+      z-index: 3;
     }
 
-.three-coin::before,
-    .three-coin::after {
+    .three-core::before {
       content: "";
       position: absolute;
-      border: 2px solid rgba(255, 209, 102, .85);
+      inset: 16px;
       border-radius: 50%;
-      transform: rotateX(70deg) rotateZ(20deg);
-      box-shadow: 0 0 18px rgba(255, 209, 102, .4);
+      border: 2px solid rgba(255,255,255,.28);
+      box-shadow: inset 0 0 25px rgba(255,255,255,.12);
     }
 
-.three-coin::before {
-      inset: -35px;
+    .three-core::after {
+      content: "";
+      position: absolute;
+      width: 115px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,209,102,.8);
+      transform: rotateX(70deg) translateZ(75px);
+      box-shadow: 0 0 20px rgba(255,209,102,.55);
     }
 
-.three-coin::after {
-      inset: -50px;
-      border-color: rgba(169, 135, 255, .75);
-      transform: rotateY(70deg) rotateZ(-25deg);
-    }
-
-.coin-symbol {
-      color: var(--gold);
-      font-size: 86px;
+    .core-symbol {
+      color: #fff3bf;
+      font-size: 78px;
       font-weight: 800;
-      text-shadow: 0 4px 20px rgba(0, 0, 0, .6);
+      text-shadow: 0 0 18px rgba(255,209,102,.8), 0 5px 24px rgba(0,0,0,.6);
+      transform: translateZ(35px);
     }
 
-.particle {
+    .scene-label {
+      position: absolute;
+      right: 8%;
+      bottom: 8%;
+      padding: 8px 12px;
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 999px;
+      color: #dce8ff;
+      background: rgba(7,11,24,.5);
+      backdrop-filter: blur(10px);
+      font-size: 11px;
+      box-shadow: 0 8px 30px rgba(0,0,0,.2);
+    }
+
+    .particle {
       width: 7px;
       height: 7px;
       position: absolute;
@@ -297,59 +350,29 @@ h1 span {
       animation: particleMove 4s linear infinite;
     }
 
-.particle-one {
-      top: 13%;
-      right: 14%;
+    .particle-one { top: 13%; right: 14%; }
+    .particle-two { bottom: 13%; left: 12%; animation-delay: 1s; }
+    .particle-three { top: 35%; left: 3%; animation-delay: 2s; }
+    .particle-four { right: 8%; bottom: 20%; animation-delay: 3s; }
+
+    @keyframes coreFloat {
+      0%, 100% { transform: translateY(0) rotateZ(0deg); }
+      50% { transform: translateY(-14px) rotateZ(2deg); }
     }
 
-.particle-two {
-      bottom: 13%;
-      left: 12%;
-      animation-delay: 1s;
+    @keyframes orbitSpin {
+      from { rotate: 0deg; }
+      to { rotate: 360deg; }
     }
 
-.particle-three {
-      top: 35%;
-      left: 3%;
-      animation-delay: 2s;
+    @keyframes particleMove {
+      0% { opacity: .2; transform: translateY(25px) scale(.7); }
+      50% { opacity: 1; transform: translateY(0) scale(1.2); }
+      100% { opacity: .2; transform: translateY(-35px) scale(.7); }
     }
 
-.particle-four {
-      right: 8%;
-      bottom: 20%;
-      animation-delay: 3s;
-    }
-
-@keyframes floating {
-      0%, 100% {
-        transform: translateY(0) rotateY(0deg);
-      }
-
-50% {
-        transform: translateY(-18px) rotateY(12deg);
-      }
-    }
-
-.three-coin::marker { content: none; }
-
-@media (prefers-reduced-motion: reduce) {
-      .three-coin, .particle { animation: none !important; }
-    }
-
-@keyframes particleMove {
-      0% {
-        opacity: .2;
-        transform: translateY(25px);
-      }
-
-50% {
-        opacity: 1;
-      }
-
-100% {
-        opacity: .2;
-        transform: translateY(-35px);
-      }
+    @media (prefers-reduced-motion: reduce) {
+      .three-core, .three-orbit, .particle { animation: none !important; }
     }
 
 /* Ticker */
@@ -1202,16 +1225,26 @@ document.querySelectorAll(".nav-list a").forEach(link => {
     });
 
 const threeScene = document.querySelector(".three-scene");
-    const threeCoin = document.querySelector(".three-coin");
-    if (threeScene && threeCoin && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const threeCore = document.querySelector(".three-core");
+    const threeOrbits = document.querySelectorAll(".three-orbit");
+    if (threeScene && threeCore && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       threeScene.addEventListener("pointermove", (event) => {
         const rect = threeScene.getBoundingClientRect();
         const x = (event.clientX - rect.left) / rect.width - 0.5;
         const y = (event.clientY - rect.top) / rect.height - 0.5;
-        threeCoin.style.transform = `translate3d(${x * 26}px, ${y * 18}px, 0) rotateX(${-y * 12}deg) rotateY(${x * 22}deg)`;
+        threeCore.style.transform = `translate3d(${x * 42}px, ${y * 30}px, 55px) rotateX(${-y * 24}deg) rotateY(${x * 30}deg)`;
+        threeOrbits.forEach((orbit, index) => {
+          const depth = index + 1;
+          orbit.style.transform = `translate3d(${x * depth * 16}px, ${y * depth * 12}px, 0) rotateX(${68 - index * 34}deg) rotateZ(${-18 + x * 18 + index * 20}deg)`;
+        });
+        threeScene.style.setProperty("--mx", `${(x + .5) * 100}%`);
+        threeScene.style.setProperty("--my", `${(y + .5) * 100}%`);
       });
       threeScene.addEventListener("pointerleave", () => {
-        threeCoin.style.transform = "";
+        threeCore.style.transform = "";
+        threeOrbits.forEach(orbit => orbit.style.transform = "");
+        threeScene.style.removeProperty("--mx");
+        threeScene.style.removeProperty("--my");
       });
     }
 
