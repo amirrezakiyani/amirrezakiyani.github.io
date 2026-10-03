@@ -787,6 +787,31 @@ th {
     @keyframes prismSpin { from{rotate:0deg} to{rotate:360deg} }
     @media (max-width:620px) { .market-cube{width:170px;height:170px}.cube-face{padding:17px;border-radius:20px}.cube-front{transform:translateZ(85px)}.cube-right{transform:rotateY(90deg) translateZ(85px)}.cube-top{transform:rotateX(90deg) translateZ(85px)}.cube-value{font-size:28px}.floating-chart{left:1%;transform:translateZ(110px) scale(.8) rotate(-8deg)}.cube-shadow{width:175px;bottom:24px} }
 
+    /* Special holographic crystal hero */
+    .three-scene { background: radial-gradient(circle at 50% 48%, rgba(255,255,255,.95), rgba(231,242,255,.62) 44%, rgba(236,226,255,.45)); }
+    .market-crystal { width:270px; height:270px; position:relative; transform-style:preserve-3d; transition:transform .16s ease-out; z-index:3; animation:crystalFloat 5.5s ease-in-out infinite; }
+    .crystal-depth { position:absolute; inset:27px; clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%); background:linear-gradient(135deg,rgba(68,145,255,.22),rgba(164,95,255,.38)); transform:translateZ(-46px) rotate(45deg); filter:blur(1px); box-shadow:0 0 50px rgba(126,105,239,.28); }
+    .crystal-face { position:absolute; inset:0; clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%); border:1px solid rgba(255,255,255,.9); transform-style:preserve-3d; filter:drop-shadow(0 25px 25px rgba(72,111,180,.22)); }
+    .crystal-face::before { content:""; position:absolute; inset:2px; clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%); background:linear-gradient(135deg,rgba(255,255,255,.9) 0 18%,rgba(107,195,255,.72) 42%,rgba(132,92,228,.85) 75%,rgba(255,181,82,.76)); }
+    .crystal-face::after { content:""; position:absolute; inset:17px; clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%); background:linear-gradient(145deg,rgba(255,255,255,.58),rgba(255,255,255,.04) 44%,rgba(31,80,170,.24)); border:1px solid rgba(255,255,255,.6); }
+    .crystal-front { transform:translateZ(42px); }
+    .crystal-back { transform:translateZ(-42px) rotateY(180deg); opacity:.7; }
+    .crystal-content { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; transform:translateZ(62px); color:#fff; text-align:center; text-shadow:0 3px 15px rgba(24,47,123,.36); }
+    .crystal-content strong { font-size:38px; line-height:1; }
+    .crystal-content span { margin-top:9px; font-size:11px; font-weight:800; letter-spacing:.12em; }
+    .crystal-spark { position:absolute; width:8px; height:8px; border-radius:50%; background:#fff; box-shadow:0 0 18px 5px #fff,0 0 38px 10px #87d6ff; z-index:5; animation:sparkPulse 2s ease-in-out infinite; }
+    .spark-a{top:16%;left:26%}.spark-b{right:20%;bottom:24%;animation-delay:-.7s}.spark-c{left:16%;bottom:38%;animation-delay:-1.3s}
+    .crystal-ring { position:absolute; width:350px; height:112px; border:2px solid rgba(245,173,47,.54); border-radius:50%; transform:rotateX(71deg) rotateZ(-17deg) translateZ(12px); animation:ringDrift 9s linear infinite; z-index:2; box-shadow:0 0 22px rgba(245,173,47,.2); }
+    .crystal-ring.two { width:320px;height:320px;border-color:rgba(88,154,255,.32);transform:rotateY(69deg) rotateZ(20deg);animation-duration:12s;animation-direction:reverse; }
+    .crystal-ring.three { width:285px;height:285px;border-color:rgba(163,103,240,.25);transform:rotateX(55deg) rotateZ(53deg);animation-duration:15s; }
+    .crystal-chip { position:absolute; z-index:6; padding:10px 13px; border:1px solid rgba(255,255,255,.78); border-radius:16px; color:#2d4772; background:rgba(255,255,255,.78); box-shadow:0 18px 35px rgba(67,100,157,.16); backdrop-filter:blur(12px); font-size:11px; font-weight:800; animation:chipFloat 4s ease-in-out infinite; }
+    .chip-a{right:3%;top:17%}.chip-b{left:0;bottom:20%;animation-delay:-1.6s}.chip-c{right:4%;bottom:7%;animation-delay:-2.7s;color:#9d5b1f}
+    @keyframes crystalFloat { 0%,100%{margin-top:0}50%{margin-top:-13px} }
+    @keyframes ringDrift { from{rotate:0deg}to{rotate:360deg} }
+    @keyframes sparkPulse { 0%,100%{transform:scale(.6);opacity:.45}50%{transform:scale(1.4);opacity:1} }
+    @keyframes chipFloat { 0%,100%{translate:0 0}50%{translate:0 -8px} }
+    @media(max-width:620px){.market-crystal{width:188px;height:188px}.crystal-content strong{font-size:29px}.crystal-ring{width:245px;height:82px}.crystal-ring.two{width:220px;height:220px}.crystal-ring.three{width:198px;height:198px}.crystal-chip{padding:7px 9px;font-size:9px}}
+
 </style>
 </head>
 
@@ -849,14 +874,16 @@ th {
         </div>
       </div>
 
-<div class="three-scene" aria-label="فرم سه‌بعدی اختصاصی نبض بازار">
-        <div class="prism-line"></div><div class="prism-line two"></div>
-        <div class="cube-shadow"></div>
-        <div class="market-cube">
-          <div class="cube-face cube-front"><span class="cube-brand">NABZ / MARKET</span><span class="cube-arrow">↗ +۲.۴٪ امروز</span><strong class="cube-value">₿ ۱۲۸</strong><span class="cube-caption">نبض لحظه‌ای بازار</span></div>
-          <div class="cube-face cube-right"><span class="cube-brand">GOLD INDEX</span><span class="cube-arrow">LIVE</span><strong class="cube-value">Au</strong><span class="cube-caption">طلای ۱۸ عیار</span></div>
-          <div class="cube-face cube-top"><span class="cube-brand">CURRENCY</span><span class="cube-arrow">ONLINE</span><strong class="cube-value">$ €</strong><span class="cube-caption">ارزهای جهانی</span></div>
+<div class="three-scene" aria-label="کریستال سه‌بعدی اختصاصی نبض بازار">
+        <div class="crystal-ring"></div><div class="crystal-ring two"></div><div class="crystal-ring three"></div>
+        <div class="market-crystal">
+          <div class="crystal-depth"></div><div class="crystal-face crystal-back"></div><div class="crystal-face crystal-front"></div>
+          <div class="crystal-content"><strong>₿ ۱۲۸</strong><span>NABZ / LIVE MARKET</span></div>
         </div>
+        <span class="crystal-chip chip-a">دلار <b>۲۶۹K</b> ↗</span><span class="crystal-chip chip-b">طلا <b>Au</b> · زنده</span><span class="crystal-chip chip-c">رشد امروز +۲.۴٪</span>
+        <span class="crystal-spark spark-a"></span><span class="crystal-spark spark-b"></span><span class="crystal-spark spark-c"></span>
+        <span class="scene-label">کریستال بازار را با موس بچرخان</span>
+      </div>
         <div class="floating-chart"><svg viewBox="0 0 100 48" aria-hidden="true"><polyline points="2,39 18,31 32,35 48,17 62,24 78,8 98,13"/></svg><small>روند بازار</small></div>
         <span class="floating-badge badge-one">داده زنده <b>●</b></span><span class="floating-badge badge-two">سه‌بعدی · روشن · پویا</span>
         <span class="particle particle-one"></span><span class="particle particle-two"></span><span class="particle particle-three"></span><span class="particle particle-four"></span>
@@ -1323,24 +1350,19 @@ document.querySelectorAll(".nav-list a").forEach(link => {
     });
 
 const threeScene = document.querySelector(".three-scene");
-    const marketCube = document.querySelector(".market-cube");
-    const prismLines = document.querySelectorAll(".prism-line");
+    const marketCrystal = document.querySelector(".market-crystal");
+    const crystalRings = document.querySelectorAll(".crystal-ring");
     const tiltItems = document.querySelectorAll(".price-card, .panel, .ticker-item");
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (threeScene && marketCube && !reduceMotion) {
+    if (threeScene && marketCrystal && !reduceMotion) {
       threeScene.addEventListener("pointermove", (event) => {
-        const rect = threeScene.getBoundingClientRect();
-        const x = (event.clientX - rect.left) / rect.width - .5;
-        const y = (event.clientY - rect.top) / rect.height - .5;
-        marketCube.style.transform = `translate3d(${x * 38}px, ${y * 30}px, 60px) rotateX(${-y * 20}deg) rotateY(${x * 30 + 18}deg) rotateZ(${x * 3}deg)`;
-        prismLines.forEach((line, index) => line.style.transform = `translate3d(${x * (index + 1) * 14}px, ${y * (index + 1) * 10}px, 0) rotateZ(${22 - index * 41 + x * 18}deg) rotateX(${70 - index * 8}deg)`);
-        threeScene.style.setProperty("--mx", `${(x + .5) * 100}%`); threeScene.style.setProperty("--my", `${(y + .5) * 100}%`);
+        const rect = threeScene.getBoundingClientRect(); const x=(event.clientX-rect.left)/rect.width-.5; const y=(event.clientY-rect.top)/rect.height-.5;
+        marketCrystal.style.transform=`translate3d(${x*42}px,${y*32}px,58px) rotateX(${-y*25}deg) rotateY(${x*32}deg) rotateZ(${x*5}deg)`;
+        crystalRings.forEach((ring,index)=>ring.style.transform=`translate3d(${x*(index+1)*12}px,${y*(index+1)*9}px,0) rotateX(${71-index*8}deg) rotateY(${index*69}deg) rotateZ(${-17+index*37+x*18}deg)`);
+        threeScene.style.setProperty("--mx",`${(x+.5)*100}%`); threeScene.style.setProperty("--my",`${(y+.5)*100}%`);
       });
-      threeScene.addEventListener("pointerleave", () => { marketCube.style.transform = ""; prismLines.forEach(line => line.style.transform = ""); threeScene.style.setProperty("--mx", "50%"); threeScene.style.setProperty("--my", "50%"); });
-      tiltItems.forEach((item) => {
-        item.addEventListener("pointermove", (event) => { const rect=item.getBoundingClientRect(); const x=(event.clientX-rect.left)/rect.width-.5; const y=(event.clientY-rect.top)/rect.height-.5; item.style.transform=`perspective(700px) rotateX(${-y*3}deg) rotateY(${x*3}deg) translateY(-4px)`; });
-        item.addEventListener("pointerleave", () => item.style.transform = "");
-      });
+      threeScene.addEventListener("pointerleave",()=>{marketCrystal.style.transform="";crystalRings.forEach(ring=>ring.style.transform="");threeScene.style.setProperty("--mx","50%");threeScene.style.setProperty("--my","50%");});
+      tiltItems.forEach(item=>{item.addEventListener("pointermove",event=>{const rect=item.getBoundingClientRect();const x=(event.clientX-rect.left)/rect.width-.5;const y=(event.clientY-rect.top)/rect.height-.5;item.style.transform=`perspective(700px) rotateX(${-y*3}deg) rotateY(${x*3}deg) translateY(-4px)`});item.addEventListener("pointerleave",()=>item.style.transform="")});
     }
 
     $("refreshButton").addEventListener("click", loadPrices);
